@@ -1,0 +1,20 @@
+﻿Sub Open_Notepad
+	If Not Window("Notepad").Exist(10) Then
+			systemutil.Run "notepad.exe"
+			Window("Notepad").Click
+		else
+			msgbox "Notepad already opened, please close all notepad first"
+	End If
+End Sub
+
+Sub Close_Notepad
+	Set objkey = CreateObject("WScript.Shell")
+	If Window("Notepad").Exist(10) Then
+			Window("Notepad").Close
+			wait 3
+			objkey.SendKeys "{RIGHT}"
+			wait 1
+			objkey.SendKeys "{ENTER}"
+			wait 2
+	End If
+End Sub

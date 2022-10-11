@@ -1,5 +1,8 @@
-﻿Sub RUN_Command_Bitvise(Command)
-	
+﻿Dim JLN_Number
+
+
+Sub RUN_Command_Bitvise(Command)
+
 	Dim dtCommand
 	Set objkey = CreateObject("WScript.Shell")
 	Set devices = CreateObject("Mercury.DeviceReplay")
@@ -10,7 +13,7 @@
 	If ucase(command) = "GETGLIF" Then
 		objkey.SendKeys (" ")
 		wait 1
-		objkey.SendKeys ("+{INSERT}")
+		objkey.SendKeys (JLN_Number)
 	End If
 	
 	Window("Bitvise xterm").Type micReturn
@@ -47,13 +50,27 @@ Sub Open_Terminal_Bitvise()
 End Sub
 
 Sub GET_JLN_Number
-
+	REM ==== Call Funtion Library
+	Dim objSysInfo, Path_Env, LibFunction
+	Set objSysInfo 		= Createobject("Wscript.Network")	
+	Path_Env = Environment.Value("Path_Folder")
+	LibFunction = Path_Env & "Libraries\"
+	LibRepo = Path_Env & "Repositories\"
+	LoadFunctionLibrary (LibFunction & "Lib_Notepad.qfl")
+	
+	Set objkey = CreateObject("WScript.Shell")
+	
 	If Window("Bitvise xterm").InsightObject("IMG_TEXT_JLN").Exist(5) Then
 		Set devices = CreateObject("Mercury.DeviceReplay")
-		
 		x = (Window("Bitvise xterm").InsightObject("IMG_TEXT_JLN").getRoProperty("abs_x") + 90)
 		y = (Window("Bitvise xterm").InsightObject("IMG_TEXT_JLN").getRoProperty("abs_y") + 10)
 		devices.MouseMove x , y
 		devices.MouseDblClick x , y , LEFT_MOUSE_BUTTON
+		
+		Call Open_Notepad()
+		wait 2
+		objkey.SendKeys ("^V")	
+		JLN_Number = Window("Notepad").WinObject("JLN_Number").GetROProperty("text")
+		Call Close_Notepad()
 	End If
 End Sub
