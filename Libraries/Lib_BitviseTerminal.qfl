@@ -66,11 +66,14 @@ Sub GET_JLN_Number
 		y = (Window("Bitvise xterm").InsightObject("IMG_TEXT_JLN").getRoProperty("abs_y") + 10)
 		devices.MouseMove x , y
 		devices.MouseDblClick x , y , LEFT_MOUSE_BUTTON
-		
+		wait 2
 		Call Open_Notepad()
 		wait 2
-		objkey.SendKeys ("^V")	
+		
+		objkey.SendKeys ("^V")
+		wait 1		
 		JLN_Number = Window("Notepad").WinObject("JLN_Number").GetROProperty("text")
+		wait 2
 		Call Close_Notepad()
 	End If
 End Sub

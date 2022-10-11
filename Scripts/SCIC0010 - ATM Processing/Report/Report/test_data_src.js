@@ -1,1 +1,1 @@
-﻿var __testDataSource={items:[{dataFilePath:'Default.xlsx',dataFileFormat:'excel',dataFileFolder:'D:\\2021 - BNI API\\03. API - Scripts\\SAPI0001 Get Token P2P Lending\\Report',namePairs:[]}]};
+﻿var __testDataSource={items:[{dataFilePath:'Default.xlsx',dataFileFormat:'excel',dataFileFolder:'C:\\Users\\1442\\Desktop\\BitviseSIMATM\\Scripts\\SCIC0010 - ATM Processing\\Report',namePairs:[]}]};

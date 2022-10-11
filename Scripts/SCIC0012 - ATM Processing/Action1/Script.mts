@@ -34,7 +34,9 @@ Sub spLoadLibrary()
 	
 	LoadFunctionLibrary (LibFunction & "Lib_BitviseLog.qfl")
 	LoadFunctionLibrary (LibFunction & "Lib_BitviseTerminal.qfl")
+	LoadFunctionLibrary (LibFunction & "Lib_Notepad.qfl")
 	
+	Call RepositoriesCollection.Add(LibRepo & "RP_Notepad.tsr")
 	Call RepositoriesCollection.Add(LibRepo & "RP_Bitvice.tsr")
 End Sub
 
