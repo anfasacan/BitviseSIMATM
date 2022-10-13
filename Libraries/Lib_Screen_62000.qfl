@@ -1,0 +1,44 @@
+﻿Sub Searching_Nasabah_62000
+	dtNorek = DataTable.Value("NOMER_REKENING",dtlocalsheet)
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebEdit("AccountNumber").Set dtNorek
+	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Fill The Nomer Rekening and Click Btn Proses", " ", compatibilityMode.Desktop, ReportStatus.Passed)
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebButton("Btn Proses").Click
+End Sub
+
+Sub Filling_Mandatory_Field_2000
+	'So For The field here, using the batch data to fill the mandatory field
+	'The Scema is
+	'Jenis Rekening, Sub Kategori, NPWP, Metode Pembayaran Bunga, Ind Pemberitahuan
+	'Ind Surat Menyurat, Ind Proses, Kd Bhs, Alasan Buka Rek, Sumber Dana, Perkiraan Trans
+	Dim dtBatchData,Data
+	Set objkey = CreateObject("WScript.Shell")
+	dtBatchData = DataTable.Value("BATCH_FIELD",dtlocalsheet)
+	Data = Split(dtBatchData,",")
+
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("1_Jenis Rekening").Select Data(0)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("2_Sub Kategori").Select Data(1)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("3_NPWP").Select Data(2)
+	wait 2
+	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Fill Mandatory Field", " ", compatibilityMode.Desktop, ReportStatus.Passed)
+	wait 2
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("4_Metode Pembayaran Bunga").Select Data(3)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("5_Ind Pemberitahuan").Select Data(4)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("6_Ind Surat Menyurat").Select Data(5)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("7_Ind Proses").Select Data(6)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("8_Kd Bhs").Select Data(7)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("9_Alasan Buka Rek").Select Data(8)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("10_Sumber Dana").Select Data(9)
+	wait 1
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("11_Perkiraan Trans").Select Data(10)
+	wait 2
+	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Fill Mandatory Field", " ", compatibilityMode.Desktop, ReportStatus.Passed)
+	wait 2
+End Sub

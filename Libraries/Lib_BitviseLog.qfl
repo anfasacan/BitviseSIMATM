@@ -1,4 +1,4 @@
-﻿Sub DA_Login(varLogType_Login)
+﻿Sub DA_Login_Bitvise(varLogType_Login)
 	Dim appLog, dtIPAddress, dtPort, dtUsername, dtPassword, dt_TCID
 	
 	dtIPAddress			= DataTable.Value("LOG_" & UCase(varLogType_Login) & "_IP_ADDRESS", "LOG")
@@ -31,7 +31,7 @@
 		End If
 End Sub
 
-Sub DA_Logout()
+Sub DA_Logout_Bitvise()
 	If Dialog("Session Active").Exist(5) Then
 	Dialog("Session Active").WinButton("Yes").Click
 	End If
@@ -39,3 +39,4 @@ Sub DA_Logout()
 	wait 2
 	Dialog("Bitvise SSH Client 8.46").Close
 End Sub
+

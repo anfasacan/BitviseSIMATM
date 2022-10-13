@@ -1,5 +1,6 @@
-﻿Dim JLN_Number
-
+﻿Dim JLN_Number,dtNoTeller,dtPasswordTeller
+dtNoTeller	= DataTable.Value("ICONS_NO_TELLER", "ICONS")
+dtPasswordTeller	= DataTable.Value("ICONS_PASSWORD", "ICONS")
 
 Sub RUN_Command_Bitvise(Command)
 
@@ -14,11 +15,24 @@ Sub RUN_Command_Bitvise(Command)
 		objkey.SendKeys (" ")
 		wait 1
 		objkey.SendKeys (JLN_Number)
+	ElseIf ucase(command) = "RESET_TELLER" Then
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		objkey.SendKeys (dtNoTeller)
+		wait 1
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		objkey.SendKeys (dtPasswordTeller)
+		wait 1
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		objkey.SendKeys ("Y")
 	End If
 	
 	Window("Bitvise xterm").Type micReturn
 	
 	wait 5
+	
 	If Window("Bitvise xterm_2").InsightObject("FAIL !").Exist(3) and ucase(command) = "SIMATM" Then
 		Call CaptureImageUFTV2(Window("Bitvise xterm"), "There is The output from command " & UCase(dtCommand),"The Output of SIMATM FAIL!", compatibilityMode.Desktop, ReportStatus.Failed)	
 	else
