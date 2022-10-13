@@ -1,6 +1,4 @@
-﻿Dim JLN_Number,dtNoTeller,dtPasswordTeller
-dtNoTeller	= DataTable.Value("ICONS_NO_TELLER", "ICONS")
-dtPasswordTeller	= DataTable.Value("ICONS_PASSWORD", "ICONS")
+﻿Dim JLN_Number
 
 Sub RUN_Command_Bitvise(Command)
 
@@ -16,6 +14,9 @@ Sub RUN_Command_Bitvise(Command)
 		wait 1
 		objkey.SendKeys (JLN_Number)
 	ElseIf ucase(command) = "RESET_TELLER" Then
+		Dim dtNoTeller,dtPasswordTeller
+		dtNoTeller			= DataTable.Value("ICONS_NO_TELLER", "ICONS")
+		dtPasswordTeller	= DataTable.Value("ICONS_PASSWORD", "ICONS")
 		objkey.SendKeys "{ENTER}"
 		wait 1
 		objkey.SendKeys (dtNoTeller)

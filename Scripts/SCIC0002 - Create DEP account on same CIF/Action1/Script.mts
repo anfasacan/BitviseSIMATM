@@ -12,6 +12,7 @@ Call DA_Login_ICONS()
 Call GoTo_ScreenNumber()
 Call Searching_Nasabah_62000()
 Call Filling_Mandatory_Field_2000()
+Call Filling_Mandatory_Field_500()
 Call DA_Logout_ICONS()
 
 

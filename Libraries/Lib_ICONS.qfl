@@ -1,4 +1,5 @@
-﻿Dim SetTerminalID, noJurnal
+﻿Dim SetTerminalID, noJurnal, dtNoTeller
+dtNoTeller	= DataTable.Value("ICONS_NO_TELLER", "ICONS")
 SetTerminalID = "105"
 MaxTerminalID = "999"
 
@@ -130,6 +131,7 @@ Sub Input_Login()
 			wait 5
 			
 			If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("DA_icons_USER SIGN-ON DIKOMPUTER LAIN").Exist(5) Then
+				Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar"), "User Alrady Login, Need To Logout Using Bitvise", " ", compatibilityMode.Desktop, ReportStatus.Done)
 				Call Reset_Teller()
 			End If
 			
@@ -150,6 +152,7 @@ Sub Reset_Teller()
 	Call RepositoriesCollection.Add(LibRepo & "RP_Bitvice.tsr")
 	
 	Call DA_Login_Bitvise("FNSONLAD")
+	Call Open_Terminal_Bitvise()
 	Call RUN_Command_Bitvise("RESET_TELLER")
 	Call Close_Terminal_Bitvise()
 	Call DA_Logout_Bitvise()
