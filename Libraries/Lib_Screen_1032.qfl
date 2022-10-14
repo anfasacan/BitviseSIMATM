@@ -28,9 +28,13 @@ Set objkey = CreateObject("WScript.Shell")
 		Dialog("Message from webpage").Static("DialogComponent.processDocumen").Click
 		objkey.SendKeys "{ENTER}"
 	else
-		Information = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 1032").Frame("Statusbar").WebElement("statusText").GetROProperty("title")
-		wait 2
-		Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 1032"), "Fill All Mandatory Field and Click Proses", "The Status is " & Information, compatibilityMode.Desktop, ReportStatus.Passed)
+		If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("KV_icons_Transaction_Timeout_error").Exist(1) or Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("SF_icons_ApplicationNotActive").Exist(1) or Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("SF_icons_NoMessageToDisplay").Exist(1) Then
+			Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 1032"), "Fill All Mandatory Field and Click Proses", "Failed", compatibilityMode.Desktop, ReportStatus.Failed)
+		else
+			Information = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 1032").Frame("Statusbar").WebElement("statusText").GetROProperty("title")
+			wait 2
+			Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 1032"), "Fill All Mandatory Field and Click Proses", "The Status is " & Information, compatibilityMode.Desktop, ReportStatus.Passed)
+		End If	
 	End If
 	
 end sub

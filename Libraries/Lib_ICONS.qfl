@@ -1,5 +1,4 @@
 ﻿Dim SetTerminalID, noJurnal, dtNoTeller
-dtNoTeller	= DataTable.Value("ICONS_NO_TELLER", "ICONS")
 SetTerminalID = "105"
 MaxTerminalID = "999"
 
@@ -139,6 +138,8 @@ Sub Input_Login()
 End Sub
 
 Sub Reset_Teller()
+	dtNoTeller	= DataTable.Value("ICONS_NO_TELLER", "ICONS")
+	
 	Dim objSysInfo, Path_Env, LibFunction
 	Set objSysInfo 		= Createobject("Wscript.Network")	
 	Path_Env = Environment.Value("Path_Folder")
