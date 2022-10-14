@@ -10,7 +10,6 @@ End Sub
 Sub Filling_Mandatory_Field_2000
 	wait 3
 	AccountNumber = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebEdit("Field Account Number").GetROProperty("value")
-	msgbox AccountNumber
 	'So For The field here, using the batch data to fill the mandatory field
 	'The Scema is
 	'Jenis Rekening, Sub Kategori, NPWP, Metode Pembayaran Bunga, Ind Pemberitahuan
