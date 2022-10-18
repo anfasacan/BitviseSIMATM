@@ -1,5 +1,4 @@
-﻿
-Sub Searching_Nasabah_62000
+﻿Sub Searching_Nasabah_62000
 	dtNorek = DataTable.Value("NOMER_REKENING",dtlocalsheet)
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebEdit("Field Nomer Rekening").Set dtNorek
 	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Fill The Nomer Rekening and Click Btn Proses", " ", compatibilityMode.Desktop, ReportStatus.Passed)
@@ -14,20 +13,27 @@ Sub Filling_Mandatory_Field_2000
 	'The Scema is
 	'Jenis Rekening, Sub Kategori, NPWP, Metode Pembayaran Bunga, Ind Pemberitahuan
 	'Ind Surat Menyurat, Ind Proses, Kd Bhs.
-	'For This Alasan Buka Rek, Sumber Dana, Perkiraan Trans
+	'For This Alasan Buka Rek, Sumber Dana, Perkiraan Trans,sub kategori
 	'Using Down To Select Data
 	Dim dtBatchData,Data
 	Set objkey = CreateObject("WScript.Shell")
 	dtBatchData = DataTable.Value("BATCH_FIELD",dtlocalsheet)
 	Data = Split(dtBatchData,"|")
-
+	wait 3
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("1_Jenis Rekening").Click 
 	wait 1
 	objkey.SendKeys Data(0)
 	wait 1
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("2_Sub Kategori").Click 
 	wait 1
-	objkey.SendKeys Data(1)
+	If len(Data(1)) > 1 Then
+		objkey.SendKeys Data(1)
+	Else 
+		For Iterator = 1 To Cint(Data(1)) Step 1
+			objkey.SendKeys "{DOWN}"	
+		Next
+		objkey.SendKeys "{ENTER}"	
+	End If
 	wait 1
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("3_NPWP").Click 
 	wait 1
@@ -79,12 +85,54 @@ Sub Filling_Mandatory_Field_2000
 	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Fill Mandatory Field And Press Btn Proses", " ", compatibilityMode.Desktop, ReportStatus.Passed)
 	wait 2
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebButton("Btn Proses").Click
+	wait 5
+	If Dialog("Message from webpage").Exist(2) Then
+		Do 
+		wait 2
+		Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Error", " ", compatibilityMode.Desktop, ReportStatus.Failed)	
+		wait 2
+		Dialog("Message from webpage").Click
+		wait 1
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		Loop until not Dialog("Message from webpage").Exist(2)
+	else
+		Call Check_Condition_2000()	
+	End If
+	
 End Sub
 
 Sub Filling_Mandatory_Field_500
-	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebEdit("Field Seri Number").Set "ABC123"
+	If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebEdit("Field Seri Number").Exist(2) Then
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebEdit("Field Seri Number").Set "ABC123"
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebButton("Btn Proses").Click
 	wait 2
 	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Fill Mandatory Field And Press Btn Proses", " ", compatibilityMode.Desktop, ReportStatus.Passed)	
 	wait 2
+	End If
 end sub
+
+Sub Check_Condition_2000
+	If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("Toolbar").WebElement("Judul Screen 2000").Exist(3) Then
+		information = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("Statusbar").WebElement("statusText").GetROProperty("innertext")
+		
+		If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("Statusbar").Image("greenlight").Exist(3) Then
+			wait 2
+			Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "The Proses Has Success", "With Status " & information, compatibilityMode.Desktop, ReportStatus.Passed)
+			wait 2
+		Else 
+			wait 2
+			Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "The Proses Has Failed", "With Status " & information, compatibilityMode.Desktop, ReportStatus.Failed)	
+			wait 2
+		End If
+	Else 
+		InformationPage = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("Toolbar").WebElement("Judul Screen 2000 Smart").GetROProperty("innertext")
+		wait 2
+		Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Move To Other Page", "Move To Page " & InformationPage, compatibilityMode.Desktop, ReportStatus.Passed)
+		wait 2
+	End If
+End Sub
+
+
+
+

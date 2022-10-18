@@ -1,11 +1,16 @@
 ﻿Dim SetTerminalID, noJurnal, dtNoTeller
-SetTerminalID = "105"
+SetTerminalID = "127"
 MaxTerminalID = "999"
 
 Sub DA_Login_ICONS
 	Dim dtOpenBrowser, dtURL
 	dtOpenBrowser	= DataTable.Value ("ICONS_BROWSER", "ICONS")
 	dtURL			= DataTable.Value ("ICONS_URL", "ICONS")
+	
+	If Browser("ICONS 64 Alternity").Exist Then
+		Call CloseBrowser()
+		wait 10
+	End If
 	
 	Call fnOpenBrowser(dtOpenBrowser, dtURL)
 	
@@ -39,8 +44,8 @@ Sub DA_Login_ICONS
 			Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("MainScreen").WebButton("DA_icons_Screen45_Tutup").Click
 		Else
 			Call CaptureImageUFTV2(Desktop, "General Error", " ", compatibilityMode.Desktop, ReportStatus.Failed)
-			'ExitActionIteration()
-			ExitAction()
+			ExitActionIteration()
+'			ExitAction()
 		End If
 	Else
 		If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("MainScreen").WebElement("DA_USER SIGN-ON").Exist(5) Then
@@ -50,12 +55,14 @@ Sub DA_Login_ICONS
 			wait 2
 			Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("MainScreen").WebButton("DA_icons_Screen45_Tutup").Click
 			wait 2
+'		ElseIf Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("SF_icons_ApplicationNotActive").Exist(2) Then
+'			Call Input_Login()
 		ElseIf not Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("MainScreen").WebElement("DA_USER SIGN-ON").Exist(5) Then	
 		wait 2
 			Call CaptureImageUFTV2(Desktop, "General Error", " ", compatibilityMode.Desktop, ReportStatus.Failed)
 			wait 2
-			'ExitActionIteration()
-			ExitAction()
+			ExitActionIteration()
+'			ExitAction()
 		End If
 	End If
 End Sub
