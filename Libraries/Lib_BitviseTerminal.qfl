@@ -1,12 +1,11 @@
 ﻿Dim JLN_Number
 
 Sub RUN_Command_Bitvise(Command)
-
+	wait 10
 	Dim dtCommand
 	dtCommand	= DataTable.Value("COMMAND_" & Command, dtlocalsheet)
 	Set objkey = CreateObject("WScript.Shell")
 	Set devices = CreateObject("Mercury.DeviceReplay")
-	
 	
 	Window("Bitvise xterm").Type dtCommand
 	
@@ -88,3 +87,10 @@ Sub GET_JLN_Number
 		wait 2
 	End If
 End Sub
+
+Sub RUN_SQLPLUS_Bitvice
+	wait 3
+	Window("Bitvise xterm").Type "sqlplus /"
+	wait 2
+	Window("Bitvise xterm").Type micReturn
+end sub

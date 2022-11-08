@@ -1,5 +1,5 @@
 ﻿Dim SetTerminalID, noJurnal, dtNoTeller
-SetTerminalID = "127"
+SetTerminalID = "243"
 MaxTerminalID = "999"
 
 Sub DA_Login_ICONS
@@ -8,7 +8,7 @@ Sub DA_Login_ICONS
 	dtURL			= DataTable.Value ("ICONS_URL", "ICONS")
 	
 	If Browser("ICONS 64 Alternity").Exist Then
-		Call CloseBrowser()
+		Browser("ICONS 64 Alternity").CloseAllTabs
 		wait 10
 	End If
 	
@@ -24,7 +24,15 @@ Sub DA_Login_ICONS
 
 	If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("MainScreen").WebButton("DA_icons_btnLoginProses").Exist(15) Then
 		Call Input_Login()
-	End If	
+	End If
+
+	If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("SF_icons_ApplicationNotActive").Exist(2) Then
+		Browser("ICONS 64 Alternity").CloseAllTabs
+		wait 5
+		Call fnOpenBrowser(dtOpenBrowser, dtURL)
+		wait 2
+		Call Input_Login()
+	End If
 	
 	If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("DA_icons_TerminalNotAvailable").Exist(5) or Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("DA_icons_USER SIGN-ON DIKOMPUTER LAIN").Exist(5) or Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("FR_icons_SocketExceptionError").Exist(5) or Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("KV_icons_Transaction_Timeout_error").Exist(5) or Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("SF_icons_NoMessageToDisplay").Exist(5) Then
 		Do 
@@ -68,7 +76,11 @@ Sub DA_Login_ICONS
 End Sub
 
 Sub DA_Logout_ICONS
+	do
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Toolbar").WebButton("DA_icons_SignOff").Click
+	wait 3
+	Loop until Browser("ICONS 64 Alternity").Dialog("Message from webpage").Exist(2)
+	
 	If Browser("ICONS 64 Alternity").Dialog("Message from webpage").WinButton("DA_icons_OK").Exist(10) Then
 		Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity"), "Logout Icons Confirm 1", " ", compatibilityMode.Desktop, ReportStatus.Passed)
 		Browser("ICONS 64 Alternity").Dialog("Message from webpage").WinButton("DA_icons_OK").Click
@@ -147,21 +159,42 @@ End Sub
 Sub Reset_Teller()
 	dtNoTeller	= DataTable.Value("ICONS_NO_TELLER", "ICONS")
 	
-	Dim objSysInfo, Path_Env, LibFunction
-	Set objSysInfo 		= Createobject("Wscript.Network")	
-	Path_Env = Environment.Value("Path_Folder")
-	LibFunction = Path_Env & "Libraries\"
-	LibRepo = Path_Env & "Repositories\"
-	LoadFunctionLibrary (LibFunction & "Lib_BitviseLog.qfl")
-	LoadFunctionLibrary (LibFunction & "Lib_BitviseTerminal.qfl")
-	LoadFunctionLibrary (LibFunction & "Lib_Notepad.qfl")
-	
-	Call RepositoriesCollection.Add(LibRepo & "RP_Notepad.tsr")
-	Call RepositoriesCollection.Add(LibRepo & "RP_Bitvice.tsr")
-	
 	Call DA_Login_Bitvise("FNSONLAD")
 	Call Open_Terminal_Bitvise()
 	Call RUN_Command_Bitvise("RESET_TELLER")
 	Call Close_Terminal_Bitvise()
 	Call DA_Logout_Bitvise()
 End Sub
+
+Sub RefreshPage
+	set objkey = CreateObject("WScript.Shell")
+	Set devices = CreateObject("Mercury.DeviceReplay")
+
+	
+	x = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("greyblock").getRoProperty("abs_x") + 150
+	y = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Statusbar").WebElement("greyblock").getRoProperty("abs_y") - 100
+	devices.MouseMove x , y
+	devices.MouseClick x , y , LEFT_MOUSE_BUTTON
+	objkey.SendKeys "+{F10}"
+	wait 3
+	objkey.SendKeys ("r")
+	wait 5
+	
+End Sub
+
+function GetExcelValue(IndexCol,IndexRow,FileName,SheetName)
+	Dim objSysInfo, Path_Env, LibFunction
+	Set objSysInfo 		= Createobject("Wscript.Network")	
+	Path_Env = Environment.Value("Path_Folder")
+	LibExcel = Path_Env & "Excel\"
+	Set objExcel = CreateObject("Excel.Application")
+    objExcel.DisplayAlerts = False
+    Set objWorkbook = objExcel.Workbooks.Open (LibExcel & FileName )
+    Set objSheet  = objWorkbook.Worksheets(SheetName)   'Or pass sheet number integer value 1,2,etc
+    GetExcelValue = objSheet.Cells(IndexCol, IndexRow).value
+    objWorkbook.SaveAs (LibExcel & FileName)
+    objWorkbook.Close
+    Set objSheet  = Nothing
+    Set objWorkbook = Nothing
+    Set objExcel = Nothing
+End function

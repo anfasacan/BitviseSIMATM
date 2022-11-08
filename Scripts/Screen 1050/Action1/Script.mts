@@ -32,6 +32,7 @@ Sub spLoadLibrary()
 	LoadFunctionLibrary (LibFunction & "Lib_Screen_1050.qfl")
 	LoadFunctionLibrary (LibFunction & "Lib_ICONS.qfl")
 	
+	Call RepositoriesCollection.Add(LibRepo & "RP_Bitvice.tsr")
 	Call RepositoriesCollection.Add(LibRepo & "RP_ICONS_Main.tsr")
 	Call RepositoriesCollection.Add(LibRepo & "RP_Screen_1050.tsr")
 	

@@ -25,14 +25,20 @@ Sub spLoadLibrary()
 	Path_Env = Environment.Value("Path_Folder")
 	LibFunction = Path_Env & "Libraries\"
 	LibRepo = Path_Env & "Repositories\"
+	
+	'Main Repo and function
 	LoadFunctionLibrary (LibFunction & "Lib_Report.vbs")
 	LoadFunctionLibrary (LibFunction & "Lib_GlobalFunction.qfl")
-	
-	LoadFunctionLibrary (LibFunction & "Lib_BitviseLog.qfl")
-	LoadFunctionLibrary (LibFunction & "Lib_Screen_62000.qfl")
 	LoadFunctionLibrary (LibFunction & "Lib_ICONS.qfl")
+	LoadFunctionLibrary (LibFunction & "Lib_BitviseLog.qfl")
+	LoadFunctionLibrary (LibFunction & "Lib_BitviseTerminal.qfl")
 	
 	Call RepositoriesCollection.Add(LibRepo & "RP_ICONS_Main.tsr")
+	Call RepositoriesCollection.Add(LibRepo & "RP_Bitvice.tsr")
+	
+	'Repo and function Using On this Action
+	LoadFunctionLibrary (LibFunction & "Lib_Screen_62000.qfl")
+	
 	Call RepositoriesCollection.Add(LibRepo & "RP_Screen_62000.tsr")
 	
 End Sub

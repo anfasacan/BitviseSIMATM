@@ -24,6 +24,19 @@ Sub Filling_Mandatory_Field_2000
 	wait 1
 	objkey.SendKeys Data(0)
 	wait 1
+	
+	If Dialog("Message from webpage").Exist(2) Then
+		Do 
+		wait 2
+		Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Error", " ", compatibilityMode.Desktop, ReportStatus.Failed)	
+		wait 2
+		Dialog("Message from webpage").Click
+		wait 1
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		Loop until not Dialog("Message from webpage").Exist(2)
+	End If
+	
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("2_Sub Kategori").Click 
 	wait 1
 	If len(Data(1)) > 1 Then
@@ -34,6 +47,20 @@ Sub Filling_Mandatory_Field_2000
 		Next
 		objkey.SendKeys "{ENTER}"	
 	End If
+	wait 1
+	
+	If Dialog("Message from webpage").Exist(2) Then
+		Do 
+		wait 2
+		Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "Error", " ", compatibilityMode.Desktop, ReportStatus.Failed)	
+		wait 2
+		Dialog("Message from webpage").Click
+		wait 1
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		Loop until not Dialog("Message from webpage").Exist(2)
+	End If
+	
 	wait 1
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("MainScreen").WebList("3_NPWP").Click 
 	wait 1
@@ -115,8 +142,9 @@ end sub
 Sub Check_Condition_2000
 	If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("Toolbar").WebElement("Judul Screen 2000").Exist(3) Then
 		information = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("Statusbar").WebElement("statusText").GetROProperty("innertext")
-		
-		If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("Statusbar").Image("greenlight").Exist(3) Then
+		informationIcon = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000").Frame("Statusbar").Image("greenlight").GetROProperty("file name")
+		wait 3
+		If informationIcon = "greenlight.jpg" Then
 			wait 2
 			Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 62000"), "The Proses Has Success", "With Status " & information, compatibilityMode.Desktop, ReportStatus.Passed)
 			wait 2

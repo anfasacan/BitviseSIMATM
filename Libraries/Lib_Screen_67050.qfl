@@ -1,0 +1,34 @@
+﻿Sub Search_Detail_CIF_67050
+	dtTime = 1
+	set objkey = CreateObject("WScript.Shell")
+	dtCIF = DataTable.Value("CIF",dtlocalsheet)
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 67050").Frame("MainScreen").WebEdit("Field CIF").Click
+	objkey.SendKeys (dtCIF)
+	wait 2
+	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 67050"), "Fill Field CIF", "", compatibilityMode.Desktop, ReportStatus.Done)
+	wait 2
+	objkey.SendKeys "{ENTER}"
+	wait 5
+	
+
+	do
+	wait 1
+	dtTime = dtTime + 1
+	If dtTime = 15 Then
+		Exit do
+	End If
+	Loop until Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 67050").Frame("MainScreen").WebEdit("Field No Identitas").Exist(2) and Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 67050").Frame("MainScreen").WebEdit("Field No Identitas").GetROProperty("value") <> 0
+	
+	If dtTime > 14 Then
+		information = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 67050").Frame("Statusbar").WebElement("statusText").GetROProperty("innertext")
+		informationIcon = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 67050").Frame("Statusbar").Image("greenlight").GetROProperty("file name")
+		wait 2
+		Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 67050"), "Failed Searcing Detail CIF", "CIF Failed to Generate", "With Status " & information, compatibilityMode.Desktop, ReportStatus.Failed)	
+		wait 2
+	else
+		wait 2
+		Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 67050"), "There is CIF Detail", "CIF Number : " & dtCIF, compatibilityMode.Desktop, ReportStatus.Passed)
+		wait 2
+	End If
+End Sub
+
