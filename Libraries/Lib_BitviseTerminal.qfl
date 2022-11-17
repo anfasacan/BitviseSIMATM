@@ -3,7 +3,13 @@
 Sub RUN_Command_Bitvise(Command)
 	wait 10
 	Dim dtCommand
-	dtCommand	= DataTable.Value("COMMAND_" & Command, dtlocalsheet)
+	
+	If ucase(command) = "RESET_TELLER" Then
+		dtCommand	= "reset_teller"
+	else
+		dtCommand	= DataTable.Value("COMMAND_" & Command, dtlocalsheet)	
+	End If
+	
 	Set objkey = CreateObject("WScript.Shell")
 	Set devices = CreateObject("Mercury.DeviceReplay")
 	
@@ -32,7 +38,7 @@ Sub RUN_Command_Bitvise(Command)
 	
 	Window("Bitvise xterm").Type micReturn
 	
-	wait 5
+	wait 15
 	
 	If Window("Bitvise xterm_2").InsightObject("FAIL !").Exist(3) and ucase(command) = "SIMATM" Then
 		Call CaptureImageUFTV2(Window("Bitvise xterm"), "There is The output from command " & UCase(dtCommand),"The Output of SIMATM FAIL!", compatibilityMode.Desktop, ReportStatus.Failed)	

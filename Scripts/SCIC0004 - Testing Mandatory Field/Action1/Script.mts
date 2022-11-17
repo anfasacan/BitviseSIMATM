@@ -14,7 +14,17 @@ Call DA_Login_ICONS()
 Call GoTo_ScreenNumber()
 
 
-If Iteration = 1 Then
+If Iteration = 1 Or Iteration = 3  Then
+	Call Filling_Detail_CIF_63001
+	Call Filling_Kontak_CIF_63001
+	Call Generate_CIF_63001()
+
+ElseIf Iteration = 5 Then
+	Call Filling_Field_Detail_63001_Perusahaan()
+	Call Filling_Field_Kontak_63001_Perusahaan()
+	Call Generate_CIF_63001()
+	
+ElseIf Iteration = 7 Then
 	Call Filling_Detail_CIF_63001
 	Call Filling_Kontak_CIF_63001
 	Call Generate_CIF_63001()
@@ -22,16 +32,22 @@ If Iteration = 1 Then
 ElseIf Iteration = 2 Then
 	Call Check_Mandatory_Field_63001_Perorangan()
 	
-ElseIf Iteration > 2 and Iteration < 34 Then
-	Call Cleaning_Field_63001_Perorangan()
-	Call Filling_Field_Detail_63001_Perorangan()
-	Call Cleaning_Auto_Fill_Field_63001_Perorangan()
-	Call Check_Mandatory_Field_is_True_36001_Detail_Perorangan()
+ElseIf Iteration = 4 or Iteration = 6 Then
+	Call Check_Mandatory_Field_63001_Perusahaan()
 
-ElseIf Iteration > 33 Then
-	Call Filling_Field_Detail_63001_Perorangan()
-	Call Filling_Field_Kontak_63001_Perorangan()
-	Call Check_Mandatory_Field_is_True_36001_Kontak_Perorangan()
+ElseIf Iteration = 8 Then
+	Call Check_Mandatory_Field_63001_Pemerintahan()
+	
+'ElseIf Iteration > 2 and Iteration < 34 Then
+'	Call Cleaning_Field_63001_Perorangan()
+'	Call Filling_Field_Detail_63001_Perorangan()
+'	Call Cleaning_Auto_Fill_Field_63001_Perorangan()
+'	Call Check_Mandatory_Field_is_True_36001_Detail_Perorangan()
+'
+'ElseIf Iteration > 33 Then
+'	Call Filling_Field_Detail_63001_Perorangan()
+'	Call Filling_Field_Kontak_63001_Perorangan()
+'	Call Check_Mandatory_Field_is_True_36001_Kontak_Perorangan()
 End If
 
 Call DA_Logout_ICONS()

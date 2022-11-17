@@ -45,11 +45,11 @@ Sub Filling_Kontak_CIF_63001
 		Case "01"
 			Call Filling_Field_Kontak_63001_Perorangan()
 		Case "02"
-			
+			Call Filling_Field_Kontak_63001_Perusahaan()
 		Case "03"
-			
+			Call Filling_Field_Kontak_63001_Perusahaan()
 		Case "04"
-		
+			Call Filling_Field_Kontak_63001_Pemerintahan()
 	End Select
 	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001"), "Fill Needed Form And Click Button Check CDD", "", compatibilityMode.Desktop, ReportStatus.Done)
 	
@@ -80,25 +80,28 @@ Sub Generate_CIF_63001
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Detail").Click
 	wait 1
 	objkey.SendKeys "{ENTER}"
+	
+	Do 
 	If Dialog("Message from webpage 63001").Exist(12) Then
 		Dialog("Message from webpage 63001").Click
 		objkey.SendKeys "{ENTER}"	
 	End If
+	Loop until not Dialog("Message from webpage 63001").Exist(12)
 	
 	dtCIF = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field CIF").GetROProperty("value")
 	
 	If dtCIF = "" Then
 		Do
-			Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Kontak").Click
-			wait 2
 			Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Detail").Click
 			wait 2
 			objkey.SendKeys "{ENTER}"
 			
+			Do 
 			If Dialog("Message from webpage 63001").Exist(12) Then
-			Dialog("Message from webpage 63001").Click
-			objkey.SendKeys "{ENTER}"
-			End If			
+				Dialog("Message from webpage 63001").Click
+				objkey.SendKeys "{ENTER}"	
+			End If
+			Loop until not Dialog("Message from webpage 63001").Exist(12)
 			
 			dtCIF = Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field CIF").GetROProperty("value")
 		Loop Until dtCIF <> ""
@@ -370,7 +373,10 @@ Sub Filling_Field_Detail_63001_Perusahaan()
 	dtNoPajakLuarIDN	=	DataTable.Value("NO_PAJAK_LUAR_IDN",dtlocalsheet)
 	dtTglPendirianTerbit=	DataTable.Value("TANGGAL_PENDIRIAN_OR_TANGGAL_TERBIT",dtlocalsheet)
 	dtNamaNotaris		=	DataTable.Value("NAMA_NOTARIS",dtlocalsheet)
-	
+	dtNoSIUP			=	DataTable.Value("NO_SIUP",dtlocalsheet)
+	dtTglJthTmpoSIUP	=	DataTable.Value("TANGGAL_JATUH_TEMPO_SIUP",dtlocalsheet)
+	dtNoTDP				=	DataTable.Value("NO_TDP",dtlocalsheet)
+	dtTglJthTmpoTDP		=	DataTable.Value("TANGGAL_JATUH_TEMPO_TDP",dtlocalsheet)
 	REM === Start Filling Field
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Detail").Click
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Nasabah").Click
@@ -453,7 +459,12 @@ Sub Filling_Field_Detail_63001_Perusahaan()
 	If ucase(dtJenisID) = "AKTE PENDIRIAN" or ucase(dtJenisID) = "AKTE" Then
 		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nama Notaris ID Perusahaan").Set dtNamaNotaris
 	End If
-
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No SIUP").Set dtNoSIUP
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No TDP").Set dtNoTDP
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tgl Jth Tempo SIUP").Set dtTglJthTmpoSIUP
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tgl Jth Tmpo TDP").Set dtTglJthTmpoTDP
+	
 End Sub
 
 Sub Filling_Field_Detail_63001_Pemerintah
@@ -532,10 +543,12 @@ Sub Filling_Field_Detail_63001_Pemerintah
 	End If
 	
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Identitas").Click
+	wait 3
 	If ucase(dtJenisID) = "PERIJINAN LAIN-LAIN" or ucase(dtJenisID) = "PERIJINAN LAIN" or ucase(dtJenisID) = "PERIJINAN" Then
 		objkey.SendKeys "{DOWN 2}"
 	End If
-	objkey.SendKeys "{TAB}"
+	wait 3
+	objkey.SendKeys "{ENTER}"
 	
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nomer Identitas").Set dtNOID
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Terbit ID Perusahaan").Set dtTglPendirianTerbit
@@ -598,33 +611,42 @@ Sub Filling_Field_Kontak_63001_Perorangan
 	
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").Set dtEmail
 	
-	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pekerjaan").Click 
-	objkey.SendKeys (dtKodePekerjaan)
-	wait 1
+	If dtKodePekerjaan <> "" Then
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pekerjaan").Click 
+		objkey.SendKeys (dtKodePekerjaan)
+		wait 1	
+	End If
+	
 	
 	If Dialog("Message from webpage 63001").Exist(2) then
 		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
 	End If
 	
-	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan Per Bulan").Click
+	If dtKodePenghasilanBulan <> "" Then
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan Per Bulan").Click
 	For Iterator = 1 To dtKodePenghasilanBulan + 1 Step 1
 		objkey.SendKeys "{DOWN}"
 	Next
 	objkey.SendKeys "{ENTER}"
-	wait 1
+	wait 1	
+	End If
+	
 	
 	If Dialog("Message from webpage 63001").Exist(2) then
 		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
 	End If
 	
-	If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan PerTahun").Exist(2) Then
-	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan PerTahun").Click
-		For Iterator = 1 To dtKodePenghasilanTahun + 1 Step 1
-		objkey.SendKeys "{DOWN}"
-	Next
-	objkey.SendKeys "{ENTER}"
-	wait 1
+	If dtKodePenghasilanTahun <> "" Then
+		If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan PerTahun").Exist(2) Then
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan PerTahun").Click
+			For Iterator = 1 To dtKodePenghasilanTahun + 1 Step 1
+			objkey.SendKeys "{DOWN}"
+		Next
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		End If	
 	End If
+	
 	
 	If Dialog("Message from webpage 63001").Exist(2) then
 		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
@@ -638,9 +660,12 @@ Sub Filling_Field_Kontak_63001_Perorangan
 		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
 	End If
 	
+	If dtKodeLokasiBI <> "" Then
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Lokasi BI").Click
 	objkey.SendKeys (dtKodeLokasiBI)
-	wait 1
+	wait 1	
+	End If
+	
 	
 	If Dialog("Message from webpage 63001").Exist(2) then
 		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
@@ -677,6 +702,268 @@ Sub Filling_Field_Kontak_63001_Perorangan
 	wait 1
 	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Devisi").Click
 	wait 1
+	For Iterator = 1 To dtKodeDevisi + 1 Step 1
+		objkey.SendKeys "{DOWN}"
+	Next
+	objkey.SendKeys "{ENTER}"
+
+End Sub
+
+Sub Filling_Field_Kontak_63001_Perusahaan
+	Set objkey = CreateObject("WScript.Shell")
+	REM ==== Define Variable
+	dtNoTelpKantor1			=	DataTable.Value("NO_TELP_KANTOR_1",dtlocalsheet)
+	dtNoTelpKantor2			=	DataTable.Value("NO_TELP_KANTOR_2",dtlocalsheet)
+	dtNoTelpFax				=	DataTable.Value("NO_TELP_FAX",dtlocalsheet)
+	dtEmail					=	DataTable.Value("EMAIL",dtlocalsheet)
+	dtKodeSektorUsaha		=	DataTable.Value("KODE_SEKTOR_BIDANG_USAHA",dtlocalsheet)
+	dtKodePenghasilanBulan	=	DataTable.Value("KODE_PENGHASILAN_PERBULAN",dtlocalsheet)
+	dtKodePenghasilanTahun	=	DataTable.Value("KODE_PENGHASILAN_PERTAHUN",dtlocalsheet)
+	dtKodeSegmenBI			=	DataTable.Value("KODE_SEGMEN_BI",dtlocalsheet)
+	dtKodeLokasiBI			=	DataTable.Value("KODE_LOKASI_BI",dtlocalsheet)
+	dtKodeGrupPrsh			=	DataTable.Value("KODE_GRUP_PRSH",dtlocalsheet)
+	dtKodePemilikBI			=	DataTable.Value("KODE_PEMILIK_BI",dtlocalsheet)
+	dtKodeSegmen			=	DataTable.Value("KODE_SEGMEN",dtlocalsheet)
+	dtKodeSubSegmen			=	DataTable.Value("KODE_SUB_SEGMEN",dtlocalsheet)
+	dtKodeDevisi			=	DataTable.Value("KODE_DEVISI",dtlocalsheet)
+	
+	REM ==== Start Filling Field
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Kontak").Click
+	If dtNoTelpKantor1 <> "" Then
+		LenghNoTelpKantor1 = len(dtNoTelpKantor1)
+		dtKodeNoTelpKantor1 = left(dtNoTelpKantor1,3)
+		dtNoTelpKantor1Fill = Right(dtNoTelpKantor1,(LenghNoTelpKantor1 - 3))
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 1").Set dtKodeNoTelpKantor1
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 1").Set dtNoTelpKantor1Fill
+	End If
+	
+	If dtNoTelpKantor2 <> "" Then
+		LenghNoTelpKantor2 = len(dtNoTelpKantor2)
+		dtKodeNoTelpKantor2 = left(dtNoTelpKantor2,3)
+		dtNoTelpKantor2Fill = Right(dtNoTelpKantor2,(LenghNoTelpKantor2 - 3))
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 2").Set dtKodeNoTelpKantor2
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 2").Set dtNoTelpKantor2Fill
+	End If
+	
+	If dtNoTelpFax <> "" Then
+		LenghNoTelpFax = len(dtNoTelpFax)
+		dtKodeNoTelpFax = left(dtNoTelpFax,3)
+		dtNoTelpFaxFill = Right(dtNoTelpFax,(LenghNoTelpFax - 3))
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No HP Alt").Set dtKodeNoTelpFax
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Telp HP Alt").Set dtNoTelpFaxFill
+	End If
+	
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").Set dtEmail
+	
+	If dtKodeSektorUsaha <> "" Then
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sektor Usaha").Click
+		objkey.SendKeys (dtKodeSektorUsaha)
+		wait 1	
+	End If
+	
+	
+	If Dialog("Message from webpage 63001").Exist(2) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	If dtKodePenghasilanTahun <> "" Then
+		If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Pendapatan Tahunan").Exist(2) Then
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Pendapatan Tahunan").Click
+			For Iterator = 1 To dtKodePenghasilanTahun + 1 Step 1
+			objkey.SendKeys "{DOWN}"
+		Next
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		End If	
+	End If
+	
+	
+	If Dialog("Message from webpage 63001").Exist(2) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sigmen BI").Click
+	objkey.SendKeys (dtKodeSegmenBI)
+	wait 1
+	
+	If Dialog("Message from webpage 63001").Exist(2) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	If dtKodeLokasiBI <> "" Then
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Lokasi BI").Click
+	objkey.SendKeys (dtKodeLokasiBI)
+	wait 1	
+	End If
+	
+	
+	If Dialog("Message from webpage 63001").Exist(2) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Grup Prsh").Click
+	objkey.SendKeys (dtKodeGrupPrsh)
+	wait 1
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pemilik BI").Click
+	For Iterator = 1 To dtKodePemilikBI Step 1
+		objkey.SendKeys "{DOWN}"
+	Next
+	objkey.SendKeys "{ENTER}"
+	wait 1
+	
+	If Dialog("Message from webpage 63001").Exist(10) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Segmen").Click
+	wait 1
+	For Iterator = 1 To dtKodeSegmen + 1 Step 1
+		objkey.SendKeys "{DOWN}"
+	Next
+	objkey.SendKeys "{ENTER}"
+	wait 3
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sub Segmen").Click
+	wait 3
+	For Iterator = 1 To dtKodeSubSegmen + 1 Step 1
+		objkey.SendKeys "{DOWN}"
+	Next
+	objkey.SendKeys "{ENTER}"
+	wait 3
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Devisi").Click
+	wait 3
+	For Iterator = 1 To dtKodeDevisi + 1 Step 1
+		objkey.SendKeys "{DOWN}"
+	Next
+	objkey.SendKeys "{ENTER}"
+
+End Sub
+
+Sub Filling_Field_Kontak_63001_Pemerintahan
+	Set objkey = CreateObject("WScript.Shell")
+	REM ==== Define Variable
+	dtNoTelpKantor1			=	DataTable.Value("NO_TELP_KANTOR_1",dtlocalsheet)
+	dtNoTelpKantor2			=	DataTable.Value("NO_TELP_KANTOR_2",dtlocalsheet)
+	dtNoTelpFax				=	DataTable.Value("NO_TELP_FAX",dtlocalsheet)
+	dtEmail					=	DataTable.Value("EMAIL",dtlocalsheet)
+	dtKodeSektorUsaha		=	DataTable.Value("KODE_SEKTOR_BIDANG_USAHA",dtlocalsheet)
+	dtKodePenghasilanBulan	=	DataTable.Value("KODE_PENGHASILAN_PERBULAN",dtlocalsheet)
+	dtKodePenghasilanTahun	=	DataTable.Value("KODE_PENGHASILAN_PERTAHUN",dtlocalsheet)
+	dtKodeSegmenBI			=	DataTable.Value("KODE_SEGMEN_BI",dtlocalsheet)
+	dtKodeLokasiBI			=	DataTable.Value("KODE_LOKASI_BI",dtlocalsheet)
+	dtKodeGrupPrsh			=	DataTable.Value("KODE_GRUP_PRSH",dtlocalsheet)
+	dtKodePemilikBI			=	DataTable.Value("KODE_PEMILIK_BI",dtlocalsheet)
+	dtKodeSegmen			=	DataTable.Value("KODE_SEGMEN",dtlocalsheet)
+	dtKodeSubSegmen			=	DataTable.Value("KODE_SUB_SEGMEN",dtlocalsheet)
+	dtKodeDevisi			=	DataTable.Value("KODE_DEVISI",dtlocalsheet)
+	
+	REM ==== Start Filling Field
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Kontak").Click
+	If dtNoTelpKantor1 <> "" Then
+		LenghNoTelpKantor1 = len(dtNoTelpKantor1)
+		dtKodeNoTelpKantor1 = left(dtNoTelpKantor1,3)
+		dtNoTelpKantor1Fill = Right(dtNoTelpKantor1,(LenghNoTelpKantor1 - 3))
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 1").Set dtKodeNoTelpKantor1
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 1").Set dtNoTelpKantor1Fill
+	End If
+	
+	If dtNoTelpKantor2 <> "" Then
+		LenghNoTelpKantor2 = len(dtNoTelpKantor2)
+		dtKodeNoTelpKantor2 = left(dtNoTelpKantor2,3)
+		dtNoTelpKantor2Fill = Right(dtNoTelpKantor2,(LenghNoTelpKantor2 - 3))
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 2").Set dtKodeNoTelpKantor2
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 2").Set dtNoTelpKantor2Fill
+	End If
+	
+	If dtNoTelpFax <> "" Then
+		LenghNoTelpFax = len(dtNoTelpFax)
+		dtKodeNoTelpFax = left(dtNoTelpFax,3)
+		dtNoTelpFaxFill = Right(dtNoTelpFax,(LenghNoTelpFax - 3))
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No HP Alt").Set dtKodeNoTelpFax
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Telp HP Alt").Set dtNoTelpFaxFill
+	End If
+	
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").Set dtEmail
+	
+	If dtKodeSektorUsaha <> "" Then
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sektor Usaha").Click
+		objkey.SendKeys (dtKodeSektorUsaha)
+		wait 1	
+	End If
+	
+	
+	If Dialog("Message from webpage 63001").Exist(2) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	If dtKodePenghasilanTahun <> "" Then
+		If Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Pendapatan Tahunan").Exist(2) Then
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Pendapatan Tahunan").Click
+			For Iterator = 1 To dtKodePenghasilanTahun + 1 Step 1
+			objkey.SendKeys "{DOWN}"
+		Next
+		objkey.SendKeys "{ENTER}"
+		wait 1
+		End If	
+	End If
+	
+	
+	If Dialog("Message from webpage 63001").Exist(2) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sigmen BI").Click
+	objkey.SendKeys (dtKodeSegmenBI)
+	wait 1
+	
+	If Dialog("Message from webpage 63001").Exist(2) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	If dtKodeLokasiBI <> "" Then
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Lokasi BI").Click
+	objkey.SendKeys (dtKodeLokasiBI)
+	wait 1	
+	End If
+	
+	
+	If Dialog("Message from webpage 63001").Exist(2) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Grup Prsh").Click
+	objkey.SendKeys (dtKodeGrupPrsh)
+	wait 1
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pemilik BI").Click
+	For Iterator = 1 To dtKodePemilikBI Step 1
+		objkey.SendKeys "{DOWN}"
+	Next
+	objkey.SendKeys "{ENTER}"
+	wait 1
+	
+	If Dialog("Message from webpage 63001").Exist(10) then
+		Dialog("Message from webpage 63001").WinButton("Btn OK").Click
+	End If
+	
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Segmen").Click
+	wait 1
+	For Iterator = 1 To dtKodeSegmen + 1 Step 1
+		objkey.SendKeys "{DOWN}"
+	Next
+	objkey.SendKeys "{ENTER}"
+	wait 3
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sub Segmen").Click
+	wait 3
+	For Iterator = 1 To dtKodeSubSegmen + 1 Step 1
+		objkey.SendKeys "{DOWN}"
+	Next
+	objkey.SendKeys "{ENTER}"
+	wait 3
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Devisi").Click
+	wait 3
 	For Iterator = 1 To dtKodeDevisi + 1 Step 1
 		objkey.SendKeys "{DOWN}"
 	Next
@@ -946,6 +1233,443 @@ Sub Check_Mandatory_Field_63001_Perorangan
 	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan PerTahun").GetROProperty("class")
 	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan PerTahun").GetTOProperty("TestObjName")
 	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Sigmen BI
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sigmen BI").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sigmen BI").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Lokasi BI
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Lokasi BI").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Lokasi BI").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Grup Prsh
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Grup Prsh").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Grup Prsh").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Pemilik BI
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pemilik BI").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pemilik BI").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kode RM
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode RM").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode RM").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Segmen
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Segmen").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Segmen").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Sub Segmen
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sub Segmen").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sub Segmen").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Devisi
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Devisi").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Devisi").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	TextSS = Left(TextSS,len(TextSS)-1) & "."
+	wait 2
+	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001"), "Check Mandatory Field", TextSS, compatibilityMode.Desktop, ReportStatus.Done)
+	wait 2
+	TextSS = ""
+	
+End Sub
+
+Sub Check_Mandatory_Field_63001_Perusahaan
+	Set objkey = CreateObject("WScript.Shell")
+	dtKodeJenisNasabah	=	DataTable.Value("KODE_JENIS_NASABAH",dtlocalsheet)
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Detail").Click
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Nasabah").Click
+	wait 1
+	objkey.SendKeys (dtKodeJenisNasabah)
+	wait 5
+	REM === DROPDOWN JENIS NASABAH
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Nasabah").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Nasabah").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN JENIS Status
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Status").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Status").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Nama Perusahaan
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nama Perusahaan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nama Perusahaan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === Field Alamat 1
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Alamat Perusahaan 1").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Alamat Perusahaan 1").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === Field Alamat 2
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Alamat Perusahaan 2").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Alamat Perusahaan 2").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+
+	REM === Field Badan Usaha
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Badan Usaha").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Badan Usaha").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Domisili
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Domisili").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Domisili").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === DROPDOWN Bebas PPh
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Bebas PPh").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Bebas PPh").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+
+	REM === DROPDOWN Provinsi
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Provinsi").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Provinsi").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kabupaten
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kabupaten").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kabupaten").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kecamatan
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kecamatan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kecamatan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kelurahan
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kelurahan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kelurahan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kode Pos
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode Pos").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode Pos").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Domisili Pajak Luar
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Domisili Pajak Luar").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Domisili Pajak Luar").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === DROPDOWN Ada NPWP
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Ada NPWP").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Ada NPWP").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field NPWP
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field NPWP").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field NPWP").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Jenis Identitas
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Identitas").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Identitas").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Tanggal Pendirian
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Terbit ID Perusahaan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Terbit ID Perusahaan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Nomer Identitas
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nomer Identitas").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nomer Identitas").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kota Penerbit ID
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kota Penerbit ID").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kota Penerbit ID").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Tanggal Jatuh Tempo ID
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Jatuh Tempo ID").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Jatuh Tempo ID").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field No SIUP
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No SIUP").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No SIUP").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Tanggal Jatuh Tempo SIUP
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tgl Jth Tempo SIUP").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tgl Jth Tempo SIUP").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field No TDP
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No TDP").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No TDP").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Tanggal Jatuh Tempo TDP
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tgl Jth Tmpo TDP").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tgl Jth Tmpo TDP").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	TextSS = Left(TextSS,len(TextSS)-1) & "."
+	wait 2
+	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001"), "Check Mandatory Field", TextSS, compatibilityMode.Desktop, ReportStatus.Done)
+	wait 2
+	TextSS = ""
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Kontak").Click
+	
+	REM === Field Kode Telp Kantor 1
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 1").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 1").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Telp Kantor 1
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 1").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 1").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kode Telp Kantor 2
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 2").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 2").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Telp Kantor 2
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 2").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 2").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kode Telp Fax
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No HP Alt").GetROProperty("class")
+	dtName	=	"Field Kode No Fax"
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Telp Fax
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Telp HP Alt").GetROProperty("class")
+	dtName	=	"Field No Fax"
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Email
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Sektor Usaha
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sektor Usaha").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sektor Usaha").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Pendapatan PerTahun
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Pendapatan Tahunan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Pendapatan Tahunan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Sigmen BI
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sigmen BI").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sigmen BI").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Lokasi BI
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Lokasi BI").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Lokasi BI").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Grup Prsh
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Grup Prsh").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Grup Prsh").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Pemilik BI
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pemilik BI").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pemilik BI").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kode RM
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode RM").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode RM").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Segmen
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Segmen").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Segmen").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Sub Segmen
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sub Segmen").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sub Segmen").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Devisi
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Devisi").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Devisi").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	TextSS = Left(TextSS,len(TextSS)-1) & "."
+	wait 2
+	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001"), "Check Mandatory Field", TextSS, compatibilityMode.Desktop, ReportStatus.Done)
+	wait 2
+	TextSS = ""
+	
+End Sub
+
+Sub Check_Mandatory_Field_63001_Pemerintahan
+	Set objkey = CreateObject("WScript.Shell")
+	dtKodeJenisNasabah	=	DataTable.Value("KODE_JENIS_NASABAH",dtlocalsheet)
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Detail").Click
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Nasabah").Click
+	wait 1
+	objkey.SendKeys (dtKodeJenisNasabah)
+	wait 5
+	REM === DROPDOWN JENIS NASABAH
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Nasabah").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Nasabah").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN JENIS Status
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Status").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Status").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Nama Perusahaan
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nama Perusahaan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nama Perusahaan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === Field Alamat 1
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Alamat Perusahaan 1").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Alamat Perusahaan 1").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === Field Alamat 2
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Alamat Perusahaan 2").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Alamat Perusahaan 2").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === DROPDOWN Kode Domisili
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Domisili").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Domisili").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === DROPDOWN Bebas PPh
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Bebas PPh").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Bebas PPh").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+
+	REM === DROPDOWN Provinsi
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Provinsi").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Provinsi").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kabupaten
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kabupaten").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kabupaten").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kecamatan
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kecamatan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kecamatan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kelurahan
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kelurahan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kelurahan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kode Pos
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode Pos").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode Pos").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Domisili Pajak Luar
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Domisili Pajak Luar").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Domisili Pajak Luar").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)	
+	
+	REM === DROPDOWN Ada NPWP
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Ada NPWP").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Ada NPWP").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field NPWP
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field NPWP").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field NPWP").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Jenis Identitas
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Identitas").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Jenis Identitas").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Tanggal Pendirian
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Terbit ID Perusahaan").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Terbit ID Perusahaan").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Nomer Identitas
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nomer Identitas").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Nomer Identitas").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kota Penerbit ID
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kota Penerbit ID").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kota Penerbit ID").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Tanggal Jatuh Tempo ID
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Jatuh Tempo ID").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Tanggal Jatuh Tempo ID").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	TextSS = Left(TextSS,len(TextSS)-1) & "."
+	wait 2
+	Call CaptureImageUFTV2(Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001"), "Check Mandatory Field", TextSS, compatibilityMode.Desktop, ReportStatus.Done)
+	wait 2
+	TextSS = ""
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebElement("Tab Kontak").Click
+	
+	REM === Field Kode Telp Kantor 1
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 1").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 1").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Telp Kantor 1
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 1").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 1").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kode Telp Kantor 2
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 2").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No Telp Kantor 2").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Telp Kantor 2
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 2").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field No Telp Kantor 2").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Kode Telp Fax
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode No HP Alt").GetROProperty("class")
+	dtName	=	"Field Kode No Fax"
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Telp Fax
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Telp HP Alt").GetROProperty("class")
+	dtName	=	"Field No Fax"
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === Field Email
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
+	REM === DROPDOWN Kode Sektor Usaha
+	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sektor Usaha").GetROProperty("class")
+	dtName	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sektor Usaha").GetTOProperty("TestObjName")
+	call Check_Mandatory_Class(dtClass,dtName)
+	
 	
 	REM === DROPDOWN Kode Sigmen BI
 	dtClass	=	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sigmen BI").GetROProperty("class")
@@ -1484,10 +2208,36 @@ Sub Check_Mandatory_Field_is_True_36001_Kontak_Perorangan
 		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Kode Telp Kantor").Set""
 		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Telp Kantor").Set ""
 		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Telp Kantor").Click
+	ElseIf dtEmail = "" Then
+		dtType = "Field"
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").Set ""
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebEdit("Field Email").Click
+	ElseIf dtKodePekerjaan = "" Then
+		dtType = "Dropdown"
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Pekerjaan").Click
+	ElseIf dtKodePenghasilanTahun = "" Then
+		dtType = "Dropdown"
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Penghasilan PerTahun").Click
+	ElseIf dtKodeSegmenBI = "" Then
+		dtType = "Dropdown"
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Kode Sigmen BI").Click
+	ElseIf dtKodeLokasiBI = "" Then
+		dtType = "Dropdown"
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Lokasi BI").Click
+	ElseIf dtKodeGrupPrsh = "" Then
+		dtType = "Dropdown"
+		Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity 63001").Frame("MainScreen").WebList("Dropdown Grup Prsh").Click
 	End If
 
 
 	If dtType = "Field" Then
+		objkey.SendKeys "{ENTER}"
+	ElseIf dtType = "Dropdown" Then
+		wait 1
+		objkey.SendKeys "{BACKSPACE}"
+		wait 0.5
+		objkey.SendKeys "{BACKSPACE}"
+		wait 0.5
 		objkey.SendKeys "{ENTER}"
 	End If
 	

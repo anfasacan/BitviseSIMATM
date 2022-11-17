@@ -103,9 +103,9 @@ Sub GoTo_ScreenNumber
 	Set objkey = CreateObject("WScript.Shell")
 	dtScreenNumber = DataTable.Value("SCREEN",dtlocalsheet)
 	wait 1
-	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Toolbar").WebEdit("SceenNumber").Click
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Toolbar").WebEdit("SceenNumber").set dtScreenNumber
 	wait 2
-	objkey.SendKeys (dtScreenNumber)
+	Browser("ICONS 64 Alternity").Page("ICONS 64 Alternity").Frame("Toolbar").WebEdit("SceenNumber").Click
 	wait 2
 	objkey.SendKeys "{ENTER}"
 	wait 2

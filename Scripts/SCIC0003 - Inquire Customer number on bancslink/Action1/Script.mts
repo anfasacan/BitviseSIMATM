@@ -34,6 +34,7 @@ Sub spLoadLibrary()
 	Call RepositoriesCollection.Add(LibRepo & "RP_ICONS_Main.tsr")
 	Call RepositoriesCollection.Add(LibRepo & "RP_Bitvice.tsr")
 	Call RepositoriesCollection.Add(LibRepo & "RP_Screen_67050.tsr")
+	Call RepositoriesCollection.Add(LibRepo & "RP_Screen_67000.tsr")
 	
 End Sub
 
